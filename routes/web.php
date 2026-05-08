@@ -103,7 +103,7 @@ Route::middleware(['auth'])->group(function () {
 
     // RUTE UNTUK EDIT PROGRES (Menggunakan 2 ID)
     Route::get('/pesanan/{id_pesanan}/progres/{id_log}/edit', [PesananController::class, 'editProgres']); // Rute untuk mengubah status pesanan menjadi selesai
-
+    Route::delete('/pesanan/{id_pesanan}/progres/{id_log}', [ProgresController::class, 'destroy']);
     // Rute untuk eksekusi tandai selesai
     Route::post('/pesanan/{id}/selesai', [PesananController::class, 'tandaiSelesai']);
 });

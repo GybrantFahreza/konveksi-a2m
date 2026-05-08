@@ -107,7 +107,19 @@
             <p><strong>Posisi / Tugas:</strong> {{ $log->tarifPeran->peran }}</p>
             <p><strong>Tanggal:</strong> {{ \Carbon\Carbon::parse($log->tanggal_input)->format('d M Y') }}</p>
         </div>
+        @if (session('success'))
+            <div
+                style="background-color: #d4edda; color: #155724; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
+                {{ session('success') }}
+            </div>
+        @endif
 
+        @if (session('error'))
+            <div
+                style="background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #f5c6cb; font-weight: bold;">
+                {{ session('error') }}
+            </div>
+        @endif
         <form action="/pesanan/{{ $pesanan->id_pesanan }}/progres/{{ $log->id_log }}" method="POST">
             @csrf
             @method('PUT')

@@ -104,4 +104,57 @@ class ProgresController extends Controller
 
         return redirect('/pesanan')->with('success', 'Setoran progres harian berhasil dicatat!');
     }
+
+    // 4. Update Data Progres (Sama seperti store, ada validasi target)
+    // --- FUNGSI UPDATE (UNTUK EDIT) ---
+    public function update(Request $request, $id_pesanan, $id_log)
+    {
+        $request->validate([
+            'ukuran_s' => 'nullable|integer|min:0',
+            'ukuran_m' => 'nullable|integer|min:0',
+            'ukuran_l' => 'nullable|integer|min:0',
+            'ukuran_xl' => 'nullable|integer|min:0',
+            'ukuran_xxl' => 'nullable|integer|min:0',
+            'ukuran_3xl' => 'nullable|integer|min:0',
+        ]);
+
+        $log = LogProgresHarian::findOrFail($id_log);
+        $tarifPeran = TarifPeranPesanan::with('pesanan')->findOrFail($log->id_tarif_peran);
+        $pesanan = $tarifPeran->pesanan;
+
+        $totalBaru = ($request->ukuran_s ?? 0) + ($request->ukuran_m ?? 0) + ($request->ukuran_l ?? 0) +
+            ($request->ukuran_xl ?? 0) + ($request->ukuran_xxl ?? 0) + ($request->ukuran_3xl ?? 0);
+
+        // Hitung sum log lain (kecuali yang lagi diedit ini)
+        $sudahDikerjakanLainnya = LogProgresHarian::where('id_tarif_peran', $log->id_tarif_peran)
+            ->where('id_log', '!=', $id_log)
+            ->sum('jumlah_selesai_hari_ini');
+
+        // VALIDASI TARGET DI EDIT
+        if (($sudahDikerjakanLainnya + $totalBaru) > $pesanan->target_total_pcs) {
+            $maksimal = $pesanan->target_total_pcs - $sudahDikerjakanLainnya;
+            return back()->withInput()->with('error', "⛔ EDIT GAGAL! Total melebihi target. Maksimal yang boleh diinput untuk baris ini: {$maksimal} pcs.");
+        }
+
+        $log->update([
+            'ukuran_s' => $request->ukuran_s ?? 0,
+            'ukuran_m' => $request->ukuran_m ?? 0,
+            'ukuran_l' => $request->ukuran_l ?? 0,
+            'ukuran_xl' => $request->ukuran_xl ?? 0,
+            'ukuran_xxl' => $request->ukuran_xxl ?? 0,
+            'ukuran_3xl' => $request->ukuran_3xl ?? 0,
+            'jumlah_selesai_hari_ini' => $totalBaru,
+        ]);
+
+        return redirect("/pesanan/{$id_pesanan}/detail")->with('success', 'Progres berhasil diperbarui!');
+    }
+
+    // 5. Hapus Riwayat Progres
+    public function destroy($id_pesanan, $id_log)
+    {
+        $log = LogProgresHarian::findOrFail($id_log);
+        $log->delete();
+
+        return redirect("/pesanan/{$id_pesanan}/detail")->with('success', 'Riwayat progres berhasil dihapus.');
+    }
 }
