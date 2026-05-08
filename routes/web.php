@@ -106,4 +106,6 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/pesanan/{id_pesanan}/progres/{id_log}', [ProgresController::class, 'destroy']);
     // Rute untuk eksekusi tandai selesai
     Route::post('/pesanan/{id}/selesai', [PesananController::class, 'tandaiSelesai']);
+    // Rute untuk hapus pesanan
+    Route::delete('/pesanan/{id}', [\App\Http\Controllers\PesananController::class, 'destroy']);
 });

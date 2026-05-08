@@ -16,7 +16,13 @@ class Pesanan extends Model
         'no_hp_klien',
         'tanggal_deadline',
         'target_total_pcs',
-        'status_pesanan'
+        'status_pesanan',
+        'target_s',
+        'target_m',
+        'target_l',
+        'target_xl',
+        'target_xxl',
+        'target_3xl' // Tambahkan ini
     ];
 
     public function tarifPeran()

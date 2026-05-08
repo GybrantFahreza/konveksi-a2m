@@ -216,7 +216,7 @@
                     <th>Nama Pesanan</th>
                     <th>Klien</th>
                     <th>Nomor HP</th>
-                    <th>Target</th>
+                    <th>Target & Size</th>
                     <th>Selesai</th>
                     <th>Progress</th>
                     <th>Deadline</th>
@@ -230,7 +230,15 @@
                         <td><strong>{{ $p->nama_pesanan }}</strong></td>
                         <td>{{ $p->nama_klien }}</td>
                         <td>{{ $p->no_hp_klien ?? '-' }}</td>
-                        <td>{{ $p->target_total_pcs }} pcs</td>
+
+                        <td>
+                            <strong>{{ $p->target_total_pcs }} pcs</strong><br>
+                            <small style="color: #666; font-size: 0.8em; white-space: nowrap;">
+                                S:{{ $p->target_s }} | M:{{ $p->target_m }} | L:{{ $p->target_l }} |
+                                XL:{{ $p->target_xl }}
+                            </small>
+                        </td>
+
                         <td>{{ $p->selesai_pcs }} pcs</td>
                         <td>
                             <span style="font-size: 0.85em; font-weight: bold;">{{ $p->progress_persen }}%</span>
@@ -256,7 +264,17 @@
                                 <button class="btn-disabled" title="Progres harus 100% untuk diselesaikan">⏳ Belum
                                     Selesai</button>
                             @endif
+                            <form action="/pesanan/{{ $p->id_pesanan }}" method="POST" style="display: inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                    style="background: #ef4444; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold;"
+                                    onclick="return confirm('⚠️ YAKIN MAU HAPUS PESANAN {{ $p->nama_pesanan }}? Semua riwayat progres dan tarifnya juga akan ikut hilang permanen lho!')">
+                                    🗑️ Hapus
+                                </button>
+                            </form>
                         </td>
+
                     </tr>
                 @empty
                     <tr>

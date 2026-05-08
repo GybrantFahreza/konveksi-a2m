@@ -95,7 +95,35 @@
                 <input type="number" name="target_total_pcs" value="{{ old('target_total_pcs') }}" required>
             </div>
         </div>
-
+        <div class="panel">
+            <h3>Rincian Target per Ukuran</h3>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                <div class="form-group">
+                    <label>Size S</label>
+                    <input type="number" name="target_s" value="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Size M</label>
+                    <input type="number" name="target_m" value="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Size L</label>
+                    <input type="number" name="target_l" value="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Size XL</label>
+                    <input type="number" name="target_xl" value="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Size XXL</label>
+                    <input type="number" name="target_xxl" value="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Size 3XL</label>
+                    <input type="number" name="target_3xl" value="0" min="0">
+                </div>
+            </div>
+        </div>
         <div class="box" style="border-left: 4px solid #153752;">
             <h3 style="margin-top: 0; color: #153752;">Pengaturan Harga Borongan</h3>
             <p style="font-size: 0.9em; color: gray; margin-bottom: 15px;">Kosongkan jika peran ini tidak ada dalam
