@@ -15,37 +15,41 @@ class PesananController extends Controller
     // 1. Tampilkan Daftar Pesanan & Top Cards
     public function index()
     {
-        $semuaPesanan = Pesanan::with('tarifPeran.logProgres')->orderBy('tanggal_deadline', 'asc')->get();
+        // Ambil data pesanan aktif
+        $pesananAktif = Pesanan::with('tarifPeran.logProgres')
+            ->where('status_pesanan', 'Pengerjaan')
+            ->orderBy('tanggal_deadline', 'asc')
+            ->get();
 
-        // Data untuk Top Cards
-        $totalPesananAktif = $semuaPesanan->where('status_pesanan', 'Pengerjaan')->count();
-        $targetPcsPesanan = $semuaPesanan->where('status_pesanan', 'Pengerjaan')->sum('target_total_pcs');
-        $pesananSelesai = $semuaPesanan->where('status_pesanan', 'Selesai')->count();
+        // Loop untuk menyuntikkan logika "Hanya Packaging"
+        foreach ($pesananAktif as $p) {
+            // 1. Cari data peran yang namanya 'Packaging' untuk pesanan ini
+            $packaging = $p->tarifPeran->where('peran', 'Packaging')->first();
 
-        // Hitung Progres untuk Semua Pesanan
-        foreach ($semuaPesanan as $p) {
-            $selesai = 0;
-            foreach ($p->tarifPeran as $tp) {
-                $selesai += $tp->logProgres->sum('jumlah_selesai_hari_ini');
-            }
+            // 2. Hitung jumlah yang sudah dipacking
+            $p->selesai_pcs = $packaging ? $packaging->logProgres->sum('jumlah_selesai_hari_ini') : 0;
 
-            // LOGIKA BARU: Cegah angka 'selesai_pcs' melebihi target
-            if ($selesai > $p->target_total_pcs) {
-                $p->selesai_pcs = $p->target_total_pcs; // Mentok di angka target
-            } else {
-                $p->selesai_pcs = $selesai;
-            }
-
-            // Persentase juga dicegah agar tidak lebih dari 100%
-            $persentase = $p->target_total_pcs > 0 ? round(($selesai / $p->target_total_pcs) * 100) : 0;
-            $p->progress_persen = $persentase > 100 ? 100 : $persentase;
+            // 3. Hitung persentase progres (Packaging / Total Target)
+            $p->progress_persen = $p->target_total_pcs > 0
+                ? round(($p->selesai_pcs / $p->target_total_pcs) * 100)
+                : 0;
         }
 
-        // PISAHKAN DATA UNTUK 2 TABEL
-        $pesananAktif = $semuaPesanan->where('status_pesanan', 'Pengerjaan');
-        $daftarSelesai = $semuaPesanan->where('status_pesanan', 'Selesai');
+        // Ambil data pesanan selesai (opsional, untuk tabel bawah)
+        $daftarSelesai = Pesanan::where('status_pesanan', 'Selesai')->get();
 
-        return view('pesanan.index', compact('pesananAktif', 'daftarSelesai', 'totalPesananAktif', 'targetPcsPesanan', 'pesananSelesai'));
+        // Data ringkasan (Cards)
+        $totalPesananAktif = $pesananAktif->count();
+        $targetPcsPesanan = $pesananAktif->sum('target_total_pcs');
+        $pesananSelesai = $daftarSelesai->count();
+
+        return view('pesanan.index', compact(
+            'pesananAktif',
+            'daftarSelesai',
+            'totalPesananAktif',
+            'targetPcsPesanan',
+            'pesananSelesai'
+        ));
     }
 
     // Fungsi BARU: Eksekusi Tandai Selesai
@@ -53,22 +57,25 @@ class PesananController extends Controller
     {
         $pesanan = Pesanan::with('tarifPeran.logProgres')->findOrFail($id);
 
-        // Hitung ulang progres di backend untuk keamanan ganda
-        $selesai = 0;
-        foreach ($pesanan->tarifPeran as $tp) {
-            $selesai += $tp->logProgres->sum('jumlah_selesai_hari_ini');
-        }
-        $persentase = $pesanan->target_total_pcs > 0 ? round(($selesai / $pesanan->target_total_pcs) * 100) : 0;
+        // Cari khusus peran 'Packaging'
+        $packaging = $pesanan->tarifPeran->where('peran', 'Packaging')->first();
 
-        // Validasi: Tolak jika belum 100%
+        // Hitung selesai berdasarkan packaging
+        $selesaiPackaging = $packaging ? $packaging->logProgres->sum('jumlah_selesai_hari_ini') : 0;
+
+        $persentase = $pesanan->target_total_pcs > 0
+            ? round(($selesaiPackaging / $pesanan->target_total_pcs) * 100)
+            : 0;
+
+        // Validasi: Tolak jika Packaging belum 100%
         if ($persentase < 100) {
-            return back()->with('error', 'Gagal! Pesanan belum mencapai target 100%.');
+            return back()->with('error', 'Gagal! Pesanan belum bisa diselesaikan karena progres PACKAGING belum mencapai 100%.');
         }
 
         // Jika lolos, ubah statusnya!
         $pesanan->update(['status_pesanan' => 'Selesai']);
 
-        return back()->with('success', 'Mantap! Pesanan ' . $pesanan->nama_pesanan . ' telah resmi diselesaikan dan dipindahkan ke arsip.');
+        return back()->with('success', 'Mantap! Pesanan ' . $pesanan->nama_pesanan . ' telah resmi diselesaikan (Packaging 100%) dan diarsipkan.');
     }
 
     // ... (Biarkan fungsi create() dan store() persis seperti yang lama) ...
