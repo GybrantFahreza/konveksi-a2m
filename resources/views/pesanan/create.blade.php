@@ -90,10 +90,6 @@
                 <label>Tanggal Deadline Kesepakatan</label>
                 <input type="date" name="tanggal_deadline" value="{{ old('tanggal_deadline') }}" required>
             </div>
-            <div class="form-group">
-                <label>Total Target (Pcs)</label>
-                <input type="number" name="target_total_pcs" value="{{ old('target_total_pcs') }}" required>
-            </div>
         </div>
         <div class="panel">
             <h3>Rincian Target per Ukuran</h3>

@@ -78,12 +78,11 @@ class PesananController extends Controller
     }
     public function store(Request $request)
     {
-        // 1. Validasi input
+        // 1. Validasi input (TIDAK ADA LAGI target_total_pcs)
         $request->validate([
             'nama_pesanan' => 'required|string',
             'nama_klien' => 'required|string',
             'tanggal_deadline' => 'required|date',
-            'target_total_pcs' => 'required|integer|min:1', // 👈 Kembalikan jadi required (wajib isi)
             'target_s' => 'nullable|integer|min:0',
             'target_m' => 'nullable|integer|min:0',
             'target_l' => 'nullable|integer|min:0',
@@ -92,15 +91,14 @@ class PesananController extends Controller
             'target_3xl' => 'nullable|integer|min:0',
         ]);
 
-        // Hitung total dari inputan rincian size
-        $totalDariSize = ($request->target_s ?? 0) + ($request->target_m ?? 0) +
+        // Hitung total otomatis murni dari inputan rincian size
+        $totalTargetOtomatis = ($request->target_s ?? 0) + ($request->target_m ?? 0) +
             ($request->target_l ?? 0) + ($request->target_xl ?? 0) +
             ($request->target_xxl ?? 0) + ($request->target_3xl ?? 0);
 
-        // 🚨 VALIDASI KETAT: Cek apakah rincian size diisi dan jumlahnya sesuai?
-        // Jika user mengisi size (total > 0), tapi jumlahnya TIDAK SAMA dengan Total Target, maka TOLAK!
-        if ($totalDariSize > 0 && $totalDariSize != $request->target_total_pcs) {
-            return back()->withInput()->with('error', "⛔ Gagal Simpan! Jumlah rincian size ({$totalDariSize} pcs) tidak pas dengan Total Target ({$request->target_total_pcs} pcs). Harap sesuaikan jumlahnya!");
+        // Validasi: Jangan sampai disave kalau ukurannya 0 semua (form kosong)
+        if ($totalTargetOtomatis == 0) {
+            return back()->withInput()->with('error', '⛔ Gagal Simpan! Anda belum memasukkan rincian ukuran sama sekali. Minimal harus ada 1 pcs pakaian.');
         }
 
         // Mulai Jurus DB Transaction!
@@ -113,7 +111,7 @@ class PesananController extends Controller
                 'nama_klien' => $request->nama_klien,
                 'no_hp_klien' => $request->no_hp_klien,
                 'tanggal_deadline' => $request->tanggal_deadline,
-                'target_total_pcs' => $request->target_total_pcs, // 👈 Tetap gunakan patokan utama
+                'target_total_pcs' => $totalTargetOtomatis, // 👈 TOTALNYA OTOMATIS MASUK KE SINI SOB!
                 'target_s' => $request->target_s ?? 0,
                 'target_m' => $request->target_m ?? 0,
                 'target_l' => $request->target_l ?? 0,
@@ -149,7 +147,7 @@ class PesananController extends Controller
             // Jika semua berhasil, simpan permanen ke MySQL!
             DB::commit();
 
-            return redirect('/pesanan')->with('success', 'Mantap! Pesanan baru dengan rincian ukuran berhasil dibuat!');
+            return redirect('/pesanan')->with('success', 'Mantap! Pesanan baru berhasil disimpan dengan target otomatis ' . $totalTargetOtomatis . ' pcs!');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withInput()->with('error', 'Gagal menyimpan ke Database! Pesan Error: ' . $e->getMessage());
