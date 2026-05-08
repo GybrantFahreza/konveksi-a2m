@@ -70,9 +70,34 @@
             <h2 style="margin: 0;">Detail Riwayat Pengerjaan: {{ $pesanan->nama_pesanan }}</h2>
             <a href="/pesanan" style="font-size: 1.5em; text-decoration: none; color: black;">❌</a>
         </div>
-
+        <div
+            style="background-color: #f0fdf4; border: 1px solid #bbf7d0; padding: 15px; border-radius: 8px; margin-top: 15px; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 15px; align-items: center;">
+            <div style="margin-right: auto;">
+                <span style="color: #166534; font-weight: bold; font-size: 1.1em;">🎯 Total Target:
+                    {{ $pesanan->target_total_pcs }} Pcs</span>
+            </div>
+            <div
+                style="background: white; padding: 5px 12px; border-radius: 6px; border: 1px solid #e2e8f0; font-weight: bold; color: #334155;">
+                S : {{ $pesanan->target_s ?? 0 }}</div>
+            <div
+                style="background: white; padding: 5px 12px; border-radius: 6px; border: 1px solid #e2e8f0; font-weight: bold; color: #334155;">
+                M : {{ $pesanan->target_m ?? 0 }}</div>
+            <div
+                style="background: white; padding: 5px 12px; border-radius: 6px; border: 1px solid #e2e8f0; font-weight: bold; color: #334155;">
+                L : {{ $pesanan->target_l ?? 0 }}</div>
+            <div
+                style="background: white; padding: 5px 12px; border-radius: 6px; border: 1px solid #e2e8f0; font-weight: bold; color: #334155;">
+                XL : {{ $pesanan->target_xl ?? 0 }}</div>
+            <div
+                style="background: white; padding: 5px 12px; border-radius: 6px; border: 1px solid #e2e8f0; font-weight: bold; color: #334155;">
+                XXL : {{ $pesanan->target_xxl ?? 0 }}</div>
+            <div
+                style="background: white; padding: 5px 12px; border-radius: 6px; border: 1px solid #e2e8f0; font-weight: bold; color: #334155;">
+                3XL : {{ $pesanan->target_3xl ?? 0 }}</div>
+        </div>
         @if (session('success'))
-            <div style="background-color: #d4edda; color: #155724; padding: 10px; margin-top: 15px; border-radius: 4px;">
+            <div
+                style="background-color: #d4edda; color: #155724; padding: 10px; margin-top: 15px; border-radius: 4px;">
                 {{ session('success') }}</div>
         @endif
 
