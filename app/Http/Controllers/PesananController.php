@@ -141,7 +141,7 @@ class PesananController extends Controller
     {
         $pesanan = Pesanan::findOrFail($id);
 
-        // Langsung tarik semua log secara berurutan berdasarkan tanggal
+        // Menarik log berdasarkan relasi tarifPeran
         $logs = LogProgresHarian::with(['karyawan', 'tarifPeran'])
             ->whereHas('tarifPeran', function ($q) use ($id) {
                 $q->where('id_pesanan', $id);
@@ -158,6 +158,7 @@ class PesananController extends Controller
         $pesanan = Pesanan::findOrFail($id_pesanan);
         $log = LogProgresHarian::with(['karyawan', 'tarifPeran'])->findOrFail($id_log);
 
+        // Pastikan nama file view-nya benar (pakai underscore atau strip)
         return view('pesanan.edit_progres', compact('pesanan', 'log'));
     }
 
@@ -190,5 +191,21 @@ class PesananController extends Controller
         $log->delete(); // Hanya menghapus log di hari itu saja!
 
         return redirect("/pesanan/{$id_pesanan}/detail")->with('success', 'Riwayat pengerjaan di hari tersebut berhasil dihapus.');
+    }
+
+    // Menampilkan Detail Pesanan
+    public function show($id)
+    {
+        // 1. Cari data pesanan berdasarkan ID
+        $pesanan = \App\Models\Pesanan::findOrFail($id);
+
+        // 2. Tarik data dari model LogProgresHarian yang aslinya
+        $logs = \App\Models\LogProgresHarian::where('id_pesanan', $id)
+            ->with(['karyawan', 'tarifPeran']) // Memanggil relasi
+            ->orderBy('tanggal_input', 'desc')
+            ->get();
+
+        // 3. Kirim ke halaman detail
+        return view('pesanan.detail', compact('pesanan', 'logs'));
     }
 }

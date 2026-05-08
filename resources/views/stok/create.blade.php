@@ -41,7 +41,7 @@
     <a href="/stok" style="text-decoration: none; color: blue;">⬅ Batal</a>
     <h1>Tambah Bahan Baku Baru</h1>
 
-    <form action="/stok" method="POST">
+    <form action="/stok/bahan" method="POST">
         @csrf
         <div class="form-group">
             <label>Nama Bahan / Atribut</label>

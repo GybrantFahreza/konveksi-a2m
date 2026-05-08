@@ -244,10 +244,13 @@
 
                             @if ($p->progress_persen >= 100)
                                 <form action="/pesanan/{{ $p->id_pesanan }}/selesai" method="POST"
-                                    onsubmit="return confirm('Yakin ingin menutup pesanan ini?');" style="margin:0;">
-                                    @csrf @method('PUT')
-                                    <button type="submit" class="btn-selesai" title="Tutup Pesanan">✅ Tandai
-                                        Selesai</button>
+                                    style="display: inline;">
+                                    @csrf
+                                    <button type="submit" class="btn-selesai"
+                                        style="background: #10b981; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold;"
+                                        onclick="return confirm('Mantap nih! Yakin mau tandai selesai?')">
+                                        ✅ Tandai Selesai
+                                    </button>
                                 </form>
                             @else
                                 <button class="btn-disabled" title="Progres harus 100% untuk diselesaikan">⏳ Belum

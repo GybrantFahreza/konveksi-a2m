@@ -202,50 +202,70 @@
     </div>
 
     <div class="panel">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h2 style="margin: 0;">Daftar Barang Jadi</h2>
-            <a href="/barang-jadi/create" class="btn-add">+ Tambah Barang Jadi</a>
+            <a href="/stok/barang-jadi/create" class="btn-add"
+                style="background: #10b981; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; text-decoration: none; display: inline-block;">
+                + Tambah Barang Jadi
+            </a>
         </div>
-        <table>
+        <table style="width: 100%; border-collapse: collapse;">
             <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Nama Pakaian</th>
-                    <th>Ukuran</th>
-                    <th>Stok</th>
-                    <th>Satuan</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
+                <tr style="background: #f8fafc; color: #475569; text-align: left;">
+                    <th style="padding: 10px; border-bottom: 1px solid #e2e8f0;">No</th>
+                    <th style="padding: 10px; border-bottom: 1px solid #e2e8f0;">Nama Pakaian</th>
+                    <th style="padding: 10px; border-bottom: 1px solid #e2e8f0;">Ukuran</th>
+                    <th style="padding: 10px; border-bottom: 1px solid #e2e8f0;">Stok</th>
+                    <th style="padding: 10px; border-bottom: 1px solid #e2e8f0;">Satuan</th>
+                    <th style="padding: 10px; border-bottom: 1px solid #e2e8f0;">Status</th>
+                    <th style="padding: 10px; border-bottom: 1px solid #e2e8f0;">Aksi</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($barangJadi as $index => $bj)
+                @forelse ($barangJadi as $index => $bj)
                     <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td><strong>{{ $bj->nama_barang }}</strong></td>
-                        <td style="font-weight: bold; color: #153752;">{{ $bj->ukuran }}</td>
-                        <td>{{ $bj->stok_sekarang }}</td>
-                        <td>{{ $bj->satuan }}</td>
-                        <td>
+                        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">{{ $index + 1 }}</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">
+                            <strong>{{ $bj->nama_barang }}</strong>
+                        </td>
+                        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; font-weight: bold; color: #153752;">
+                            {{ $bj->ukuran }}</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">{{ $bj->stok_sekarang }}</td>
+
+                        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">{{ $bj->satuan ?? 'Pcs' }}</td>
+
+                        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0;">
                             @if ($bj->stok_sekarang <= 10)
-                                <span class="badge" style="background-color: #fca5a5; color: #991b1b;">Kritis</span>
+                                <span class="badge"
+                                    style="background-color: #fca5a5; color: #991b1b; padding: 4px 8px; border-radius: 12px; font-size: 0.85em; font-weight: bold;">Kritis</span>
                             @elseif($bj->stok_sekarang <= 30)
-                                <span class="badge" style="background-color: #fef08a; color: #854d0e;">Menipis</span>
+                                <span class="badge"
+                                    style="background-color: #fef08a; color: #854d0e; padding: 4px 8px; border-radius: 12px; font-size: 0.85em; font-weight: bold;">Menipis</span>
                             @else
-                                <span class="badge" style="background-color: #bbf7d0; color: #166534;">Aman</span>
+                                <span class="badge"
+                                    style="background-color: #bbf7d0; color: #166534; padding: 4px 8px; border-radius: 12px; font-size: 0.85em; font-weight: bold;">Aman</span>
                             @endif
                         </td>
-                        <td style="display: flex; gap: 5px;">
-                            <a href="/barang-jadi/{{ $bj->id_barang }}/edit" class="btn-action"
-                                style="background: #f39c12;">Edit</a>
-                            <form action="/barang-jadi/{{ $bj->id_barang }}" method="POST"
-                                onsubmit="return confirm('Hapus barang jadi ini?');" style="margin:0;">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="btn-action" style="background: #e74c3c;">Hapus</button>
+                        <td style="padding: 10px; border-bottom: 1px solid #e2e8f0; display: flex; gap: 5px;">
+                            <a href="/stok/barang-jadi/{{ $bj->id_barang }}/edit" class="btn-action"
+                                style="background: #f39c12; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 0.9em;">Edit</a>
+
+                            <form action="/stok/barang-jadi/{{ $bj->id_barang }}" method="POST"
+                                onsubmit="return confirm('Yakin ingin menghapus barang jadi ini?');" style="margin:0;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn-action"
+                                    style="background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.9em;">Hapus</button>
                             </form>
                         </td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr>
+                        <td colspan="7"
+                            style="padding: 15px; text-align: center; color: gray; border-bottom: 1px solid #e2e8f0;">
+                            Belum ada data barang jadi di gudang.</td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
