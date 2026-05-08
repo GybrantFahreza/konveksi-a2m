@@ -201,13 +201,28 @@
                     <tr>
                         <td style="text-align: left;">{{ \Carbon\Carbon::parse($absen->tanggal)->format('d F Y') }}
                         </td>
-                        <td style="text-align: center;">
-                            @if ($absen->status_kehadiran == 'Hadir')
-                                <span class="badge bg-green">Hadir</span>
-                            @elseif($absen->status_kehadiran == 'Izin' || $absen->status_kehadiran == 'Sakit')
-                                <span class="badge bg-yellow">{{ $absen->status_kehadiran }}</span>
+                        <td>
+                            {{-- GANTI status_kehadiran MENJADI status_hadir DI BAWAH INI --}}
+                            @if (strtolower($absen->status_hadir) == 'hadir')
+                                <span
+                                    style="background-color: #dcfce3; color: #166534; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 0.85em;">
+                                    ✅ Hadir
+                                </span>
+                            @elseif(strtolower($absen->status_hadir) == 'sakit')
+                                <span
+                                    style="background-color: #fef08a; color: #854d0e; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 0.85em;">
+                                    💊 Sakit
+                                </span>
+                            @elseif(strtolower($absen->status_hadir) == 'izin')
+                                <span
+                                    style="background-color: #e0f2fe; color: #075985; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 0.85em;">
+                                    📝 Izin
+                                </span>
                             @else
-                                <span class="badge bg-red">{{ $absen->status_kehadiran }}</span>
+                                <span
+                                    style="background-color: #fee2e2; color: #991b1b; padding: 4px 10px; border-radius: 6px; font-weight: bold; font-size: 0.85em;">
+                                    ❌ Alpa
+                                </span>
                             @endif
                         </td>
                     </tr>
