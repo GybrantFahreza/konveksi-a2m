@@ -94,72 +94,277 @@
       };
     </script>
     <style>
-      .material-symbols-outlined {
-        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      * {
+        box-sizing: border-box;
       }
+
+      html,
+      body {
+        width: 100%;
+        min-height: 100%;
+        overflow-x: hidden;
+      }
+
       body {
         background-color: #f7fafd;
       }
+
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+
       .soft-industrial-shadow {
         box-shadow: 0 2px 12px rgba(24, 93, 131, 0.05);
       }
-      aside, header, main {
+
+      #main-sidebar,
+      header,
+      main {
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       }
-      body.sidebar-collapsed aside { width: 80px; }
-      body.sidebar-collapsed aside h1,
-      body.sidebar-collapsed aside .font-nav-label,
-      body.sidebar-collapsed aside .mt-auto p { display: none; }
-      body.sidebar-collapsed aside nav a {
-        padding-left: 0; padding-right: 0; justify-content: center;
-        width: 48px; height: 48px; margin: 0 auto;
+
+      #main-sidebar {
+        width: 260px;
       }
-      body.sidebar-collapsed header { width: calc(100% - 80px); margin-left: 80px; }
-      body.sidebar-collapsed main { margin-left: 80px; }
-      header { width: calc(100% - 260px); margin-left: 260px; }
-      main { margin-left: 260px; }
+
+      header {
+        width: calc(100% - 260px);
+        margin-left: 260px;
+      }
+
+      main {
+        margin-left: 260px;
+      }
+
+      body.sidebar-collapsed #main-sidebar {
+        width: 80px;
+      }
+
+      body.sidebar-collapsed #main-sidebar h1,
+      body.sidebar-collapsed #main-sidebar .font-nav-label,
+      body.sidebar-collapsed #main-sidebar .mt-auto p {
+        display: none;
+      }
+
+      body.sidebar-collapsed #main-sidebar nav a {
+        padding-left: 0;
+        padding-right: 0;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        margin: 0 auto;
+      }
+
+      body.sidebar-collapsed header {
+        width: calc(100% - 80px);
+        margin-left: 80px;
+      }
+
+      body.sidebar-collapsed main {
+        margin-left: 80px;
+      }
+
+      .mobile-overlay {
+        display: none;
+      }
+
+      @media (max-width: 1024px) {
+        #main-sidebar {
+          width: 220px;
+        }
+
+        header {
+          width: calc(100% - 220px);
+          margin-left: 220px;
+        }
+
+        main {
+          margin-left: 220px;
+        }
+
+        body.sidebar-collapsed #main-sidebar {
+          width: 80px;
+        }
+
+        body.sidebar-collapsed header {
+          width: calc(100% - 80px);
+          margin-left: 80px;
+        }
+
+        body.sidebar-collapsed main {
+          margin-left: 80px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        #main-sidebar {
+          position: fixed;
+          left: 0;
+          top: 0;
+          width: 260px;
+          height: 100vh;
+          transform: translateX(-100%);
+          z-index: 70;
+        }
+
+        body.mobile-sidebar-open #main-sidebar {
+          transform: translateX(0);
+        }
+
+        body.sidebar-collapsed #main-sidebar {
+          width: 260px;
+        }
+
+        body.sidebar-collapsed #main-sidebar h1,
+        body.sidebar-collapsed #main-sidebar .font-nav-label,
+        body.sidebar-collapsed #main-sidebar .mt-auto p {
+          display: block;
+        }
+
+        body.sidebar-collapsed #main-sidebar nav a {
+          width: auto;
+          height: auto;
+          margin: 0;
+          justify-content: flex-start;
+          padding-left: 16px;
+          padding-right: 16px;
+        }
+
+        header,
+        body.sidebar-collapsed header {
+          width: 100%;
+          margin-left: 0;
+          padding-left: 16px;
+          padding-right: 16px;
+        }
+
+        main,
+        body.sidebar-collapsed main {
+          margin-left: 0;
+          width: 100%;
+        }
+
+        .mobile-overlay {
+          display: block;
+          position: fixed;
+          inset: 0;
+          background-color: rgba(0, 0, 0, 0.35);
+          z-index: 60;
+          opacity: 0;
+          pointer-events: none;
+          transition: opacity 0.25s ease;
+        }
+
+        body.mobile-sidebar-open .mobile-overlay {
+          opacity: 1;
+          pointer-events: auto;
+        }
+
+        .dashboard-date-pill {
+          display: none;
+        }
+
+        header h2 {
+          font-size: 18px;
+          white-space: nowrap;
+        }
+
+        .page-content {
+          padding-left: 16px;
+          padding-right: 16px;
+          padding-top: 88px;
+        }
+
+        .logout-text {
+          display: none;
+        }
+
+        .logout-btn {
+          padding: 8px 10px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        header {
+          height: 60px;
+        }
+
+        header h2 {
+          font-size: 16px;
+        }
+
+        .page-content {
+          padding-top: 80px;
+          padding-left: 12px;
+          padding-right: 12px;
+        }
+
+        .top-actions {
+          gap: 6px;
+        }
+
+        .hide-on-small {
+          display: none;
+        }
+      }
     </style>
 </head>
 <body class="font-body-main text-on-surface">
 
+<div class="mobile-overlay" id="mobile-overlay"></div>
+
 <!-- Sidebar -->
-<aside class="fixed left-0 top-0 h-screen w-[260px] bg-surface border-r border-outline-variant shadow-sm flex flex-col gap-lg p-lg z-50 transition-all">
+<aside id="main-sidebar" class="fixed left-0 top-0 h-screen bg-surface border-r border-outline-variant shadow-sm flex flex-col gap-lg p-lg z-50 transition-all">
   <div class="flex items-center gap-sm mb-xl">
-    <div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center text-on-primary-container">
+    <div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center text-on-primary-container shrink-0">
       <span class="material-symbols-outlined">factory</span>
     </div>
-    <h1 class="font-display-brand text-2xl text-primary">KONVEKSI A2M</h1>
+
+    <h1 class="font-display-brand text-2xl text-primary">
+      KONVEKSI A2M
+    </h1>
   </div>
+
   <nav class="flex flex-col gap-sm">
-    <a class="flex items-center gap-md bg-primary text-on-primary rounded-lg px-md py-sm border-l-4 border-primary-fixed translate-x-1 transition-transform duration-200" href="#">
+    <a class="flex items-center gap-md bg-primary text-on-primary rounded-lg px-md py-sm border-l-4 border-primary-fixed translate-x-1 transition-transform duration-200" href="/">
       <span class="material-symbols-outlined">dashboard</span>
       <span class="font-nav-label">Dashboard</span>
     </a>
+
     <a class="flex items-center gap-md text-on-surface-variant hover:text-primary px-md py-sm hover:bg-surface-container-high transition-colors duration-200" href="/karyawan">
       <span class="material-symbols-outlined">groups</span>
       <span class="font-nav-label">Karyawan</span>
     </a>
+
     <a class="flex items-center gap-md text-on-surface-variant hover:text-primary px-md py-sm hover:bg-surface-container-high transition-colors duration-200" href="/stok">
       <span class="material-symbols-outlined">inventory_2</span>
       <span class="font-nav-label">Stok</span>
     </a>
+
     <a class="flex items-center gap-md text-on-surface-variant hover:text-primary px-md py-sm hover:bg-surface-container-high transition-colors duration-200" href="/pesanan">
       <span class="material-symbols-outlined">shopping_cart</span>
       <span class="font-nav-label">Pesanan</span>
     </a>
+
     <a class="flex items-center gap-md text-on-surface-variant hover:text-primary px-md py-sm hover:bg-surface-container-high transition-colors duration-200" href="/keuangan">
       <span class="material-symbols-outlined">payments</span>
       <span class="font-nav-label">Keuangan</span>
     </a>
   </nav>
+
   <div class="mt-auto pt-lg border-t border-outline-variant">
     <div class="flex items-center gap-sm px-md">
-      <div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center">
+      <div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center shrink-0">
         <span class="material-symbols-outlined text-secondary">person</span>
       </div>
+
       <div class="overflow-hidden">
-        <p class="text-xs font-bold text-on-surface truncate">Administrator</p>
-        <p class="text-[10px] text-on-surface-variant truncate">admin@a2mkonveksi.com</p>
+        <p class="text-xs font-bold text-on-surface truncate">
+          Administrator
+        </p>
+        <p class="text-[10px] text-on-surface-variant truncate">
+          admin@a2mkonveksi.com
+        </p>
       </div>
     </div>
   </div>
@@ -170,39 +375,44 @@
 
   <!-- TopAppBar / Header -->
   <header class="fixed top-0 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-outline-variant shadow-sm flex justify-between items-center h-16 px-xl transition-all">
-    <div class="flex items-center gap-md">
-      <button class="mr-4 p-2 rounded-full hover:bg-surface-container transition-all text-on-surface-variant flex items-center justify-center active:scale-95" id="sidebar-toggle">
+    <div class="flex items-center gap-md min-w-0">
+      <button class="mr-2 md:mr-4 p-2 rounded-full hover:bg-surface-container transition-all text-on-surface-variant flex items-center justify-center active:scale-95 shrink-0" id="sidebar-toggle" type="button">
         <span class="material-symbols-outlined" id="toggle-icon">menu</span>
       </button>
-      <h2 class="font-heading-lg text-2xl font-bold text-on-surface">DASHBOARD</h2>
+
+      <h2 class="font-heading-lg text-2xl font-bold text-on-surface truncate">
+        DASHBOARD
+      </h2>
     </div>
-    <div class="flex items-center gap-lg">
-      <!-- Live Date -->
-      <div class="hidden lg:flex items-center gap-2 bg-surface-container-low border border-outline-variant px-4 py-1.5 rounded-full text-sm text-on-surface-variant font-bold">
+
+    <div class="flex items-center gap-lg top-actions shrink-0">
+      <div class="dashboard-date-pill hidden lg:flex items-center gap-2 bg-surface-container-low border border-outline-variant px-4 py-1.5 rounded-full text-sm text-on-surface-variant font-bold">
         <span class="material-symbols-outlined text-base">calendar_month</span>
         <span id="live-date">{{ \Carbon\Carbon::now()->format('l, d F Y') }}</span>
       </div>
-      <!-- Notification & Settings -->
+
       <div class="flex items-center gap-sm">
-        <button class="hover:bg-surface-container rounded-full p-2 text-on-surface-variant transition-all active:scale-95">
+        <button class="hover:bg-surface-container rounded-full p-2 text-on-surface-variant transition-all active:scale-95 hide-on-small" type="button">
           <span class="material-symbols-outlined">notifications</span>
         </button>
-        <button class="hover:bg-surface-container rounded-full p-2 text-on-surface-variant transition-all active:scale-95">
+
+        <button class="hover:bg-surface-container rounded-full p-2 text-on-surface-variant transition-all active:scale-95 hide-on-small" type="button">
           <span class="material-symbols-outlined">settings</span>
         </button>
       </div>
-      <!-- Logout -->
+
       <form action="{{ route('logout') }}" method="POST">
         @csrf
-        <button type="submit" class="bg-error text-on-error border-none px-5 py-2 rounded-lg font-bold flex items-center gap-2 hover:bg-error/80 transition-all text-sm">
-          <span class="material-symbols-outlined text-base">logout</span> Keluar
+        <button type="submit" class="logout-btn bg-error text-on-error border-none px-5 py-2 rounded-lg font-bold flex items-center gap-2 hover:bg-error/80 transition-all text-sm">
+          <span class="material-symbols-outlined text-base">logout</span>
+          <span class="logout-text">Keluar</span>
         </button>
       </form>
     </div>
   </header>
 
   <!-- Page Content -->
-  <div class="pt-24 px-xl pb-xl space-y-lg">
+  <div class="page-content pt-24 px-xl pb-xl space-y-lg">
 
     <!-- Statistics Bento Grid — 4 kolom -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-lg">
@@ -406,13 +616,65 @@
   document.addEventListener('DOMContentLoaded', () => {
     const toggleBtn = document.getElementById('sidebar-toggle');
     const toggleIcon = document.getElementById('toggle-icon');
-    const body = document.body;
+    const mobileOverlay = document.getElementById('mobile-overlay');
+
+    function isMobileLayout() {
+      return window.innerWidth <= 768;
+    }
+
+    function closeMobileSidebar() {
+      document.body.classList.remove('mobile-sidebar-open');
+
+      if (toggleIcon) {
+        toggleIcon.textContent = 'menu';
+      }
+    }
+
     if (toggleBtn) {
       toggleBtn.addEventListener('click', () => {
-        body.classList.toggle('sidebar-collapsed');
-        toggleIcon.textContent = body.classList.contains('sidebar-collapsed') ? 'menu_open' : 'menu';
+        if (isMobileLayout()) {
+          document.body.classList.toggle('mobile-sidebar-open');
+
+          if (toggleIcon) {
+            toggleIcon.textContent = document.body.classList.contains('mobile-sidebar-open') ? 'close' : 'menu';
+          }
+        } else {
+          document.body.classList.toggle('sidebar-collapsed');
+
+          if (toggleIcon) {
+            toggleIcon.textContent = document.body.classList.contains('sidebar-collapsed') ? 'menu_open' : 'menu';
+          }
+        }
       });
     }
+
+    if (mobileOverlay) {
+      mobileOverlay.addEventListener('click', closeMobileSidebar);
+    }
+
+    window.addEventListener('resize', () => {
+      if (!isMobileLayout()) {
+        document.body.classList.remove('mobile-sidebar-open');
+
+        if (toggleIcon) {
+          toggleIcon.textContent = document.body.classList.contains('sidebar-collapsed') ? 'menu_open' : 'menu';
+        }
+      } else {
+        document.body.classList.remove('sidebar-collapsed');
+
+        if (toggleIcon) {
+          toggleIcon.textContent = document.body.classList.contains('mobile-sidebar-open') ? 'close' : 'menu';
+        }
+      }
+    });
+
+    document.querySelectorAll('#main-sidebar nav a').forEach((link) => {
+      link.addEventListener('click', () => {
+        if (isMobileLayout()) {
+          closeMobileSidebar();
+        }
+      });
+    });
   });
 </script>
 </body>
