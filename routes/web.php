@@ -29,22 +29,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/karyawan', [KaryawanController::class, 'index']);
     Route::get('/karyawan/create', [KaryawanController::class, 'create']);
     Route::post('/karyawan', [KaryawanController::class, 'store']);
-
-    //  RUTE ABSENSI SUDAH DIPERBAIKI & DIPINDAH KE SINI 
     Route::post('/karyawan/absensi', [KaryawanController::class, 'simpanAbsensi']);
 
-    // --- RUTE DENGAN {id} HARUS DI BAWAH ---
+    // Route dengan {id} harus di bawah route statis
     Route::get('/karyawan/{id}/edit', [KaryawanController::class, 'edit']);
     Route::put('/karyawan/{id}', [KaryawanController::class, 'update']);
     Route::delete('/karyawan/{id}', [KaryawanController::class, 'destroy']);
-    Route::get('/karyawan/{id}/detail', [KaryawanController::class, 'detailLaporan']); // --- MANAJEMEN KARYAWAN ---
-    Route::get('/karyawan', [KaryawanController::class, 'index']);
-    Route::get('/karyawan/create', [KaryawanController::class, 'create']);
-    Route::post('/karyawan', [KaryawanController::class, 'store']);
-    Route::get('/karyawan/{id}/edit', [KaryawanController::class, 'edit']);
-    Route::put('/karyawan/{id}', [KaryawanController::class, 'update']);
-    Route::delete('/karyawan/{id}', [KaryawanController::class, 'destroy']);
-    Route::post('/absensi', [KaryawanController::class, 'simpanAbsensi']);
     Route::get('/karyawan/{id}/detail', [KaryawanController::class, 'detailLaporan']);
 
     // --- MANAJEMEN STOK ---

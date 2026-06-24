@@ -320,7 +320,7 @@
       </div>
 
       <!-- Form -->
-      <form action="/karyawan/{{ $karyawan->id }}" method="POST">
+      <form action="{{ url('karyawan/' . $karyawan->id_karyawan) }}" method="POST">
         @csrf
         @method('PUT')
 
@@ -397,18 +397,16 @@
 
             <!-- Status -->
             <div class="flex flex-col gap-xs">
-              <label class="font-heading-md text-sm text-on-surface-variant" for="status">Status</label>
+              <label class="font-heading-md text-sm text-on-surface-variant" for="status_karyawan">Status Karyawan</label>
               <div class="relative">
                 <select
                   class="w-full bg-surface border border-outline-variant rounded-lg p-md appearance-none focus:ring-2 focus:ring-primary focus:border-primary font-body-data outline-none transition-all shadow-inner"
-                  id="status"
-                  name="status"
+                  id="status_karyawan"
+                  name="status_karyawan"
                 >
-                  <option value="Tanpa Keterangan" {{ old('status', $karyawan->status) === 'Tanpa Keterangan' ? 'selected' : '' }}>Tanpa Keterangan</option>
-                  <option value="Hadir"            {{ old('status', $karyawan->status) === 'Hadir'            ? 'selected' : '' }}>Hadir</option>
-                  <option value="Izin"             {{ old('status', $karyawan->status) === 'Izin'             ? 'selected' : '' }}>Izin</option>
-                  <option value="Sakit"            {{ old('status', $karyawan->status) === 'Sakit'            ? 'selected' : '' }}>Sakit</option>
-                  <option value="Cuti"             {{ old('status', $karyawan->status) === 'Cuti'             ? 'selected' : '' }}>Cuti</option>
+                  <option value="Aktif" {{ old('status_karyawan', $karyawan->status_karyawan) === 'Aktif' ? 'selected' : '' }}>Aktif</option>
+                  <option value="Cuti"  {{ old('status_karyawan', $karyawan->status_karyawan) === 'Cuti'  ? 'selected' : '' }}>Cuti</option>
+                  <option value="Keluar" {{ old('status_karyawan', $karyawan->status_karyawan) === 'Keluar' ? 'selected' : '' }}>Keluar</option>
                 </select>
                 <span class="absolute right-md top-1/2 -translate-y-1/2 material-symbols-outlined pointer-events-none text-outline">expand_more</span>
               </div>
